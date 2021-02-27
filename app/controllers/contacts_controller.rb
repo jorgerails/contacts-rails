@@ -6,7 +6,7 @@ class ContactsController < ApplicationController
   def index
     @contacts = Contact.all
 
-    render json: paginate(@contacts)
+    render json: paginate(@contacts.order(:first_name))
   end
 
   # GET /contacts/1
