@@ -1,5 +1,5 @@
-Ruby version: 3.0.0
-Rails version: 6.1.3
+- ruby version: 3.0.0
+- rails version: 6.1.3
 
 A Rails application that perform CRUD operation through API calls for contacts resource.
 
@@ -12,5 +12,5 @@ A Rails application that perform CRUD operation through API calls for contacts r
 - Create `.env` file with api key => `API_KEY='any-api-key'`
 - Just run `rails s` to start application
 
-# TEST SUITE
+# Test suite
 - To run test suite: `bundle exec rspec`
