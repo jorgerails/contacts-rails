@@ -41,7 +41,11 @@ class ContactsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_contact
-      @contact = Contact.find(params[:id])
+      @contact = Contact.find_by(id: params[:id])
+
+      if @contact.blank?
+        render json: { id: ["Not found contact with id #{params[:id]}"] }, status: :not_found
+      end
     end
 
     # Only allow a list of trusted parameters through.
