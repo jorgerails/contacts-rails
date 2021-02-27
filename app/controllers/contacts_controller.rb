@@ -1,11 +1,12 @@
 class ContactsController < ApplicationController
+  include Pagination
   before_action :set_contact, only: [:show, :update, :destroy]
 
   # GET /contacts
   def index
     @contacts = Contact.all
 
-    render json: @contacts
+    render json: paginate(@contacts)
   end
 
   # GET /contacts/1
@@ -39,17 +40,16 @@ class ContactsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_contact
-      @contact = Contact.find_by(id: params[:id])
 
-      if @contact.blank?
-        render json: { id: ["Not found contact with id #{params[:id]}"] }, status: :not_found
-      end
-    end
+  def set_contact
+    @contact = Contact.find_by(id: params[:id])
 
-    # Only allow a list of trusted parameters through.
-    def contact_params
-      params.require(:contact).permit(:first_name, :last_name, :email, :phone_number)
+    if @contact.blank?
+      render json: { id: ["Not found contact with id #{params[:id]}"] }, status: :not_found
     end
+  end
+
+  def contact_params
+    params.require(:contact).permit(:first_name, :last_name, :email, :phone_number)
+  end
 end

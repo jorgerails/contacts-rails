@@ -12,19 +12,45 @@ RSpec.describe ContactsController, type: :request do
   describe 'GET /contacts' do
     context 'when some record exists' do
       before do
-        create_list(:contact , 5)
+        create_list(:contact , 15)
       end
 
-      it 'returns 200 with collection' do
+      it 'returns 200 with collection paginated per 10' do
         with_api_credentials do
           get :index
         end
 
         expect(response.status).to eq(200)
-        expect(JSON.parse(response.body).size).to eq(5)
-        expect(JSON.parse(response.body).first.keys.sort).to eq(
+        expect(JSON.parse(response.body)['contacts'].size).to eq(10)
+        expect(JSON.parse(response.body)['contacts'].first.keys.sort).to eq(
           %w(id first_name last_name email phone_number).sort
         )
+
+        expect(JSON.parse(response.body)['pagination']['current']).to eq(1)
+        expect(JSON.parse(response.body)['pagination']['previous']).to eq(nil)
+        expect(JSON.parse(response.body)['pagination']['next']).to eq(2)
+        expect(JSON.parse(response.body)['pagination']['pages']).to eq(2)
+        expect(JSON.parse(response.body)['pagination']['count']).to eq(15)
+      end
+
+      context 'and with page params' do
+        it 'returns 200 with collection paginated per 10' do
+          with_api_credentials do
+            get :index, params: { page: 2 }
+          end
+
+          expect(response.status).to eq(200)
+          expect(JSON.parse(response.body)['contacts'].size).to eq(5)
+          expect(JSON.parse(response.body)['contacts'].first.keys.sort).to eq(
+            %w(id first_name last_name email phone_number).sort
+          )
+
+          expect(JSON.parse(response.body)['pagination']['current']).to eq(2)
+          expect(JSON.parse(response.body)['pagination']['previous']).to eq(1)
+          expect(JSON.parse(response.body)['pagination']['next']).to eq(nil)
+          expect(JSON.parse(response.body)['pagination']['pages']).to eq(2)
+          expect(JSON.parse(response.body)['pagination']['count']).to eq(15)
+        end
       end
     end
 
@@ -35,7 +61,13 @@ RSpec.describe ContactsController, type: :request do
         end
 
         expect(response.status).to eq(200)
-        expect(JSON.parse(response.body).size).to eq(0)
+        expect(JSON.parse(response.body)['contacts'].size).to eq(0)
+
+        expect(JSON.parse(response.body)['pagination']['current']).to eq(1)
+        expect(JSON.parse(response.body)['pagination']['previous']).to eq(nil)
+        expect(JSON.parse(response.body)['pagination']['next']).to eq(nil)
+        expect(JSON.parse(response.body)['pagination']['pages']).to eq(0)
+        expect(JSON.parse(response.body)['pagination']['count']).to eq(0)
       end
     end
   end
@@ -51,7 +83,7 @@ RSpec.describe ContactsController, type: :request do
         expect(JSON.parse(response.body)['first_name']).to eq('Jorge')
         expect(JSON.parse(response.body)['last_name']).to eq('Peris')
         expect(JSON.parse(response.body)['phone_number']).to eq('+34666554433')
-        expect(JSON.parse(response.body)['email']).to eq('jorgeperis@gmail.com')
+        expect(JSON.parse(response.body)['email']).to eq('jOrgePERIS@gmail.com')
       end
     end
 
@@ -86,7 +118,7 @@ RSpec.describe ContactsController, type: :request do
         expect(JSON.parse(response.body)['first_name']).to eq('Jorge')
         expect(JSON.parse(response.body)['last_name']).to eq('Peris')
         expect(JSON.parse(response.body)['phone_number']).to eq('+34666554433')
-        expect(JSON.parse(response.body)['email']).to eq('jorge_peris@gmail.com')
+        expect(JSON.parse(response.body)['email']).to eq('jOrge_PERIS@gmail.com')
       end
     end
 
@@ -125,7 +157,7 @@ RSpec.describe ContactsController, type: :request do
           expect(JSON.parse(response.body)['first_name']).to eq('Pepe')
           expect(JSON.parse(response.body)['last_name']).to eq('Peris')
           expect(JSON.parse(response.body)['phone_number']).to eq('+34666554433')
-          expect(JSON.parse(response.body)['email']).to eq('jorgeperis@gmail.com')
+          expect(JSON.parse(response.body)['email']).to eq('jOrgePERIS@gmail.com')
         end
       end
 

@@ -10,8 +10,4 @@ class Contact < ApplicationRecord
   validates :phone_number,
             presence: true,
             length: { minimum: 9, maximum: 255 }
-
-  def email
-    self[:email].downcase
-  end
 end
